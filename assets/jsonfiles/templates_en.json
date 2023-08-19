@@ -1,0 +1,433 @@
+[
+  {
+    "id": "what-type-of-slime",
+    "question": "What Type of Slime?",
+    "options": [
+      {
+        "name": "Butter",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Floam",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Regular",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Fluffy",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Cloud",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Fishbowl",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Glitter",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "truth-or-dare",
+    "question": "Truth or Dare",
+    "options": [
+      {
+        "name": "Truth",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Dare",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Pass",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "ask-out-my-crush",
+    "question": "Ask Out My Crush?",
+    "options": [
+      {
+        "name": "YES",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "NO",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "yes-or-no",
+    "question": "YES or NO?",
+    "options": [
+      {
+        "name": "YES",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "NO",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "what-color",
+    "question": "What Color?",
+    "options": [
+      {
+        "name": "Red",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Blue",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Green",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Yellow",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Orange",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Pink",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "what-should-i-do-today",
+    "question": "What should I do today?",
+    "options": [
+      {
+        "name": "Bike Ride",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Plan a Vacation",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Listen to Music",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Watch a Classic Film",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Play a Board Game",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Picnic",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Pool",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Read a Book",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "what-to-eat",
+    "question": "What to Eat?",
+    "options": [
+      {
+        "name": "Chinese",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "American",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Japanese",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Italian",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Mexican",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Thai",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "French",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Korean",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "what-to-do-on-a-date",
+    "question": "What to do on a date?",
+    "options": [
+      {
+        "name": "Dinner",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Movie",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Opera",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Concert",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Dancing",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Cook at Home",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Picnic",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Exercise",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Hike",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "what-music-genre",
+    "question": "What Music Genre?",
+    "options": [
+      {
+        "name": "Classical",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Rock",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Jazz",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Electronic",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "R&B",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Reggae",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Folk",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Hip-Hop",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "World",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Hardcore",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "where-to-travel",
+    "question": "Where to Travel?",
+    "options": [
+      {
+        "name": "London",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Paris",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Barcelona",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "New York",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "San Francisco",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Puerto Rico",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Vancouver",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Montreal",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Beijing",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Hangzhou",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "what-to-workout",
+    "question": "What to Workout?",
+    "options": [
+      {
+        "name": "Legs",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Quads",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Neck",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Shoulders",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Back",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Chest",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Biceps",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Triceps",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  }
+]

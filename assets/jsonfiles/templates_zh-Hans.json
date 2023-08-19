@@ -1,0 +1,472 @@
+[
+  {
+    "id": "zhen-xin-hua-da-mao-xian",
+    "question": "真心话 & 大冒险",
+    "options": [
+      {
+        "name": "真心话",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "大冒险",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "yao-bu-yao",
+    "question": "要不要？",
+    "options": [
+      {
+        "name": "要",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "不要",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Pass",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "yuan-liang-nan-peng-you",
+    "question": "怎样原谅男朋友？",
+    "options": [
+      {
+        "name": "写 1000 个我爱你",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "小 CK",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "跪搓衣板",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "巴宝莉 93",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "阿玛尼红管 201",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "Colourpop 眼影",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "海底捞",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "TF80",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "带我做美甲",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "无条件原谅",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "zhi-ge-tou-zi",
+    "question": "掷个骰子",
+    "options": [
+      {
+        "name": "1",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "2",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "3",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "4",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "5",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "6",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "fang-jia-qu-na-wan",
+    "question": "放假去哪玩？",
+    "options": [
+      {
+        "name": "南京",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "杭州",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "哈尔滨",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "北京",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "青岛",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "丽江",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "黄山",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "西安",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "ni-shi-shen-me-la-ji",
+    "question": "你是什么垃圾？",
+    "options": [
+      {
+        "name": "可回收垃圾",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "干垃圾",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "湿垃圾",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "有害垃圾",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "zhen-xin-hua",
+    "question": "真心话",
+    "options": [
+      {
+        "name": "你们家里谁的脾气最大？",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "最喜欢在坐哪位异性？",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "最反感别人的什么行为？",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "做过最丢脸的事？",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "你的初吻年龄？",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "写过多少封情书？",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "你的e小癖好事什么？",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "最不满意的身体部位？",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "ju-can-chi-shen-me",
+    "question": "聚餐吃什么？",
+    "options": [
+      {
+        "name": "日本料理",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "海底捞",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "泰国菜",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "烤鱼",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "韩式烤肉",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "麻辣烫",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "自助餐",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "kao-na-ge-xue-xiao",
+    "question": "考哪个学校？",
+    "options": [
+      {
+        "name": "清华",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "北大",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "蓝翔",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "新东方烹饪学校",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "新华电脑学校",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "家里蹲",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "ta-ai-wo-ma",
+    "question": "TA 爱我吗？",
+    "options": [
+      {
+        "name": "❤️爱",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "💔不爱",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "song-nv-peng-you-li-wu",
+    "question": "送女朋友什么礼物？",
+    "options": [
+      {
+        "name": "包包",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "花",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "小裙子",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "唇膏",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "项链",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "三年高考五年模拟",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "da-mao-xian",
+    "question": "大冒险",
+    "options": [
+      {
+        "name": "公主抱离你最近的异性",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "唱青藏高原最后一句",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "做一个最性感的表情或动作",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "自摸自己身体每个地方",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "在肯德基点麦旋风",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "和右边的人接吻 10 秒",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "模仿特殊职业女子拉客",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "zuo-jia-wu",
+    "question": "谁来做家务？",
+    "options": [
+      {
+        "name": "老公",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "老婆",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "shui-bu-shui-jiao",
+    "question": "睡不睡觉？",
+    "options": [
+      {
+        "name": "立刻睡觉",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "5 分钟后",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "10 分钟后",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  },
+  {
+    "id": "yue-ta-chu-qu-ma",
+    "question": "约 TA 出去吗？",
+    "options": [
+      {
+        "name": "约",
+        "status": "normal",
+        "weight": 1.0
+      },
+      {
+        "name": "不约",
+        "status": "normal",
+        "weight": 1.0
+      }
+    ]
+  }
+]

@@ -1,8 +1,9 @@
 <template>
-  <h2 class="font-bold text-4xl text-center mb-4">
-    {{ wheelResult ? wheelResult : isRotating ? "抽奖中……" : "点击开始抽奖" }}
+  <div v-loading.fullscreen.lock="!isInitData" element-loading-text="加载数据中……"></div>
+  <h2 v-show="isInitData" class="font-bold text-2xl md:text-4xl text-center mb-2 md:mb-4">
+    {{ wheelResult ? wheelResult : isRotating ? "……" : "点击转盘开始抽奖" }}
   </h2>
-  <div ref="canvasContainer" id="canvasContainer" class="relative">
+  <div v-show="isInitData" ref="canvasContainer" id="canvasContainer" class="relative">
     <canvas
       ref="canvasDom"
       id="wheel"
@@ -35,8 +36,9 @@
     </div>
   </div>
 
-  <div class="mt-6">
+  <div v-show="isInitData" class="mt-6">
     <el-table
+      v-loading="!isInitData"
       ref="tableRef"
       :scrollbar-always-on="true"
       stripe
@@ -81,10 +83,11 @@
       添加更多
     </el-button>
   </div>
-  <div class="mt-8">
+  <div v-show="isInitData" class="mt-8">
     <p class="text-center text-sm text-gray-400">
       班级电脑小转盘 © {{ new Date().getFullYear() }} XHEMJ
     </p>
+    <p class="text-center text-sm text-gray-400">配色与素材来源于手机软件“小决定”</p>
   </div>
 </template>
 
@@ -114,20 +117,7 @@ const config = ref({
     "rgb(63,144,187)",
     "rgb(30,89,205)"
   ],
-  item: [
-    "何彦驹",
-    "杨晨辰",
-    "吴姗妮",
-    "林紫燕",
-    "杨予悦",
-    "钟鸣艺",
-    "方禾",
-    "侯钰滢",
-    "陈秋妍",
-    "何颖",
-    "林奕彤",
-    "孙婧娴"
-  ], // 奖品名称
+  item: [], // 奖品名称
   itemAngle: [] // 每个奖品所占的角度
 });
 const canvasRotate = ref(0); // 转盘旋转角度
@@ -181,6 +171,21 @@ const confirmAddItem = () => {
   initCanvas();
 };
 
+const isInitData = ref(false);
+
+async function initItemData() {
+  const data = await fetch(
+    "https://staticoss.xhemj.work/zhuanpan.xhemj.com/data.json?_t=" + Date.now(),
+    {
+      mode: "cors"
+    }
+  );
+  const json = await data.json();
+  config.value.item = json;
+  isInitData.value = true;
+  resizeCanvas();
+}
+
 function resizeCanvas() {
   const windowHeight = window.innerHeight - 150;
   const width = Math.min(windowHeight, 600);
@@ -223,10 +228,7 @@ function drawWheel(canvas) {
 
   for (let i = 0; i < config.value.item.length; i++) {
     let angle = config.value.startAngle + i * arc;
-    ctx.fillStyle =
-      config.value.colors[
-        i > config.value.colors.length - 1 ? i - config.value.colors.length + 4 : i
-      ];
+    ctx.fillStyle = config.value.colors[i % config.value.colors.length] || config.value.colors[0];
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 4;
     ctx.beginPath();
@@ -247,7 +249,6 @@ function drawWheel(canvas) {
     //----绘制奖品开始----
     ctx.fillStyle = "#fff";
     let text = config.value.item[i];
-    let line_height = 17;
     // translate方法重新映射画布上的 (0,0) 位置
     ctx.translate(
       halfWidth + Math.cos(angle + arc / 2) * config.value.textRadius,
@@ -256,20 +257,17 @@ function drawWheel(canvas) {
 
     // rotate方法旋转当前的绘图
     ctx.rotate(angle + arc / 2 + Math.PI / 2);
-
-    /** 下面代码根据奖品类型、奖品名称长度渲染不同效果，如字体、颜色、图片效果。(具体根据实际情况改变) **/
-    if (text.length > 6) {
-      //奖品名称长度超过一定范围
-      text = text.substring(0, 6) + "||" + text.substring(6);
-      let texts = text.split("||");
-      for (let j = 0; j < texts.length; j++) {
-        ctx.fillText(texts[j], -ctx.measureText(texts[j]).width / 2, j * line_height);
-      }
-    } else {
-      //在画布上绘制填色的文本。文本的默认颜色是黑色
-      //measureText()方法返回包含一个对象，该对象包含以像素计的指定字体宽度
-      ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
-    }
+    // 文本横向排列
+    ctx.rotate((-90 * Math.PI) / 180);
+    // 设置阴影
+    ctx.shadowOffsetX = 1;
+    ctx.shadowOffsetY = 1;
+    ctx.shadowColor = "#000";
+    ctx.shadowBlur = 10;
+    //在画布上绘制填色的文本。文本的默认颜色是黑色
+    //measureText()方法返回包含一个对象，该对象包含以像素计的指定字体宽度
+    ctx.fillText(text, -ctx.measureText(text).width + 20, 0);
+    ctx.rotate((90 * Math.PI) / 180);
     //把当前画布返回（调整）到上一个save()状态之前
     ctx.restore();
     //----绘制奖品结束----
@@ -359,7 +357,7 @@ function speakResult() {
 }
 
 onMounted(() => {
-  resizeCanvas();
+  initItemData();
   const isDark = useDark();
   if (isDark.value) {
     document.documentElement.classList.add("dark");

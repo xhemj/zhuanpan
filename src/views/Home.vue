@@ -69,7 +69,13 @@
         placeholder="请输入带抽取的项目，每行一个"
         :disabled="isRotating"
       />
-      <el-button class="mt-2" type="primary" style="width: 100%" @click="confirmAddItem">
+      <el-button
+        class="mt-2"
+        type="primary"
+        :disabled="isRotating"
+        style="width: 100%"
+        @click="confirmAddItem"
+      >
         确认添加
       </el-button>
     </div>
@@ -94,6 +100,7 @@
 <script setup>
 import { computed, nextTick, onMounted, ref } from "vue";
 import { useDark } from "@vueuse/core";
+import { ElMessage } from "element-plus";
 import WheelButtonImage from "../assets/images/wheel_spin_button.png"; // 转盘按钮图片
 
 const canvasContainer = ref(null);
@@ -133,21 +140,21 @@ const tableData = computed(() => {
   });
 });
 
-const handleTableDelete = (index, row) => {
+function handleTableDelete(index, row) {
   config.value.item.splice(index, 1);
   config.value.itemAngle.splice(index, 1);
   initCanvas();
-};
+}
 
 const isAddingTableItem = ref(false);
 const waitAddTableItem = ref("");
 
-const onAddItem = () => {
+function onAddItem() {
   isAddingTableItem.value = true;
   waitAddTableItem.value = "";
-};
+}
 
-const confirmAddItem = () => {
+function confirmAddItem() {
   const items = waitAddTableItem.value.split("\n").filter((item) => item);
   // 是否已经有了
   const hasItem = config.value.item.some((item) => items.includes(item));
@@ -163,13 +170,17 @@ const confirmAddItem = () => {
   }
   config.value.item = config.value.item.concat(items);
   isAddingTableItem.value = false;
+  ElMessage({
+    message: `成功添加 ${items.length} 项`,
+    type: "success"
+  });
   nextTick(() => {
     if (items.length && tableRef.value) {
       tableRef.value.scrollTo(0, 9999);
     }
   });
   initCanvas();
-};
+}
 
 const isInitData = ref(false);
 
@@ -188,7 +199,7 @@ async function initItemData() {
 
 function resizeCanvas() {
   const windowHeight = window.innerHeight - 150;
-  const width = Math.min(windowHeight, 600);
+  const width = Math.min(windowHeight, 700);
   document.querySelector("#app").style.maxWidth = width + "px";
   if (!canvasDom.value || !canvasContainer.value) return;
   nextTick(() => {
@@ -202,8 +213,10 @@ function resizeCanvas() {
   });
 }
 
+let canvas;
+
 function initCanvas() {
-  const canvas = canvasDom.value;
+  canvas = canvasDom.value;
   if (canvas.getContext) {
     config.value.outsideRadius = canvasWidth.value / 2 - 10;
     config.value.textRadius = canvasWidth.value / 2 - 40;
@@ -215,7 +228,25 @@ function initCanvas() {
 
 function drawWheel(canvas) {
   const ctx = canvas.getContext("2d");
-  const arc = Math.PI / (config.value.item.length / 2); // 根据奖品个数计算圆周角度
+
+  // 解决 canvas 手机上模糊问题
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const backingStoreRatio =
+    ctx.webkitBackingStorePixelRatio ||
+    ctx.mozBackingStorePixelRatio ||
+    ctx.msBackingStorePixelRatio ||
+    ctx.oBackingStorePixelRatio ||
+    ctx.backingStorePixelRatio ||
+    1;
+  const ratio = devicePixelRatio / backingStoreRatio;
+  canvas.width = canvasWidth.value * ratio;
+  canvas.height = canvasHeight.value * ratio;
+  canvas.style.width = canvasWidth.value + "px";
+  canvas.style.height = canvasHeight.value + "px";
+  ctx.scale(ratio, ratio);
+
+  // 根据奖品个数计算圆周角度
+  const arc = Math.PI / (config.value.item.length / 2);
   ctx.clearRect(0, 0, canvasWidth.value, canvasWidth.value);
   // 获取根元素字体大小
   const fontSize = parseFloat(
@@ -297,16 +328,6 @@ function rotateWheel(position, text) {
   // 随机偏移量
   const offset = randomNumber(-eachAngle.value / 2 + 10, eachAngle.value / 2 - 10);
   canvasRotate.value = angles + 1800 + offset;
-  setInterval(() => {
-    const currentAngle = getRotationDegrees();
-    for (let angle of config.value.itemAngle) {
-      if (currentAngle >= angle.start && currentAngle <= angle.end) {
-        wheelResult.value = config.value.item[config.value.itemAngle.indexOf(angle)];
-        break;
-      }
-    }
-  }, 10);
-  //   const timer = playTickSound();
   setTimeout(() => {
     isRotating.value = false;
     canvasRotate.value = normalizeAngle(canvasRotate.value);
@@ -321,33 +342,33 @@ function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+// 已经抽到的物项目
+const hasGotItem = ref([]);
+
 function handleRotate() {
   if (isRotating.value) return;
   isRotating.value = true;
   wheelResult.value = "";
+  // // 还未抽到的物品
+  // const notGotItem = config.value.item.filter((item) => !hasGotItem.value.includes(item));
+  // // 两次重复抽到同一个物品的概率
+  // if (hasGotItem.value.length > 4 || notGotItem.length === 0) {
+  //   hasGotItem.value = [];
+  // }
+  // const position = randomNumber(0, notGotItem.length - 1);
+  // const itemName = notGotItem[position - 1];
+  // hasGotItem.value.push(itemName);
+  // const itemIdInConfig = config.value.item.indexOf(itemName);
+  // // 旋转转盘
+  // rotateWheel(position, config.value.item[itemIdInConfig]);
   const position = randomNumber(1, config.value.item.length);
   rotateWheel(position, config.value.item[position - 1]);
-}
-
-/**
- * 实时获取转盘旋转角度
- */
-function getRotationDegrees() {
-  if (!canvasDom.value) return 0;
-  var matrix = getComputedStyle(canvasDom.value).getPropertyValue("transform");
-  if (matrix !== "none") {
-    var values = matrix.split("(")[1].split(")")[0].split(",");
-    var a = values[0];
-    var b = values[1];
-    var angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
-    return angle < 0 ? angle + 360 : angle;
-  }
-  return 0;
 }
 
 function speakResult() {
   const text = wheelResult.value;
   if (!text) return;
+  if (!window.speechSynthesis) return;
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = "zh-CN";
   msg.rate = 0.7;
@@ -368,6 +389,6 @@ onMounted(() => {
 <style scoped>
 .animate-rotating {
   transition-duration: 5s;
-  transition-timing-function: cubic-bezier(0.6, 0, 0, 1);
+  transition-timing-function: cubic-bezier(0.15, 0, 0, 1);
 }
 </style>

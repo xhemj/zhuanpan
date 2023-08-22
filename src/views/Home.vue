@@ -29,7 +29,8 @@
           width: canvasWidth * 0.35 + 'px'
         }"
         :class="{
-          'cursor-pointer': !isRotating
+          'cursor-pointer': !isRotating,
+          'cursor-not-allowed': isRotating
         }"
         @click="handleRotate"
       />
@@ -46,9 +47,17 @@
       style="width: 100%"
       max-height="250"
     >
-      <el-table-column prop="name" label="待抽奖名称" />
+      <el-table-column prop="name" label="抽取名称" />
       <el-table-column align="right">
         <template #default="scope">
+          <el-button
+            size="small"
+            type="primary"
+            :disabled="isRotating"
+            @click="handleTableEdit(scope.$index, scope.row)"
+          >
+            编辑
+          </el-button>
           <el-button
             size="small"
             type="danger"
@@ -60,7 +69,9 @@
         </template>
       </el-table-column>
     </el-table>
-    <p class="text-right text-sm text-gray-400">共 {{ config.item.length }} 项</p>
+    <div class="flex flex-row justify-between">
+      <p class="text-left text-sm text-gray-400">共 {{ config.item.length }} 项</p>
+    </div>
     <div v-if="isAddingTableItem" class="mt-2">
       <el-input
         v-model="waitAddTableItem"
@@ -95,6 +106,20 @@
     </p>
     <p class="text-center text-sm text-gray-400">配色与素材来源于手机软件“小决定”</p>
   </div>
+  <!-- 表格编辑弹出框 -->
+  <el-dialog title="编辑" v-model="editDialogVisible" :close-on-click-modal="false">
+    <el-form :model="editDialogForm" label-width="80px">
+      <el-form-item label="名称">
+        <el-input v-model="editDialogForm.name" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="confirmEdit"> 确认修改 </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -131,6 +156,7 @@ const canvasRotate = ref(0); // 转盘旋转角度
 const eachAngle = computed(() => 360 / config.value.item.length); // 每个奖品所占的角度
 const wheelResult = ref(""); // 转盘结果
 const isRotating = ref(false); // 是否正在旋转
+const localstorageKey = "wheel_data";
 
 const tableData = computed(() => {
   return config.value.item.map((item, index) => {
@@ -144,6 +170,8 @@ function handleTableDelete(index, row) {
   config.value.item.splice(index, 1);
   config.value.itemAngle.splice(index, 1);
   initCanvas();
+  // 储存到本地
+  localStorage.setItem(localstorageKey, JSON.stringify(config.value.item));
 }
 
 const isAddingTableItem = ref(false);
@@ -180,19 +208,49 @@ function confirmAddItem() {
     }
   });
   initCanvas();
+  // 储存到本地
+  localStorage.setItem(localstorageKey, JSON.stringify(config.value.item));
+}
+
+const editDialogForm = ref({
+  name: "",
+  index: -1
+});
+const editDialogVisible = ref(false);
+
+function handleTableEdit(index, row) {
+  editDialogForm.value.name = row.name;
+  editDialogForm.value.index = index;
+  editDialogVisible.value = true;
+}
+
+function confirmEdit() {
+  editDialogVisible.value = false;
+  config.value.item[editDialogForm.value.index] = editDialogForm.value.name;
+  // 储存到本地
+  localStorage.setItem(localstorageKey, JSON.stringify(config.value.item));
+  initCanvas();
 }
 
 const isInitData = ref(false);
 
 async function initItemData() {
-  const data = await fetch(
-    "https://staticoss.xhemj.work/zhuanpan.xhemj.com/data.json?_t=" + Date.now(),
-    {
-      mode: "cors"
-    }
-  );
-  const json = await data.json();
-  config.value.item = json;
+  const localConfig = localStorage.getItem(localstorageKey);
+  const localConfigJson = localConfig ? JSON.parse(localConfig) : null;
+  let data = null;
+  if (localConfigJson && localConfigJson.length) {
+    data = localConfigJson;
+  } else {
+    const res = await fetch(
+      "https://staticoss.xhemj.work/zhuanpan.xhemj.com/data.json?_t=" + Date.now(),
+      {
+        mode: "cors"
+      }
+    );
+    const json = await res.json();
+    data = json;
+  }
+  config.value.item = data;
   isInitData.value = true;
   resizeCanvas();
 }
@@ -327,7 +385,7 @@ function rotateWheel(position, text) {
   }
   // 随机偏移量
   const offset = randomNumber(-eachAngle.value / 2 + 10, eachAngle.value / 2 - 10);
-  canvasRotate.value = angles + 1800 + offset;
+  canvasRotate.value = angles + 3600 + offset;
   setTimeout(() => {
     isRotating.value = false;
     canvasRotate.value = normalizeAngle(canvasRotate.value);
@@ -342,27 +400,46 @@ function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-// 已经抽到的物项目
-const hasGotItem = ref([]);
+/**
+ * 数组乱序
+ * @param {Array} array 数组
+ */
+function shuffle(array) {
+  const tempArray = array.map((value) => ({ value, i: Math.random() }));
+  tempArray.sort((a, b) => a.i - b.i);
+  array.forEach((_, i) => {
+    array[i] = tempArray[i].value;
+  });
+}
+
+let randomedItem = []; // 已随机的项
+let notRandomedItem = []; // 未随机的项
+let maxNum = -1; // 最大项数
 
 function handleRotate() {
-  if (isRotating.value) return;
-  isRotating.value = true;
-  wheelResult.value = "";
-  // // 还未抽到的物品
-  // const notGotItem = config.value.item.filter((item) => !hasGotItem.value.includes(item));
-  // // 两次重复抽到同一个物品的概率
-  // if (hasGotItem.value.length > 4 || notGotItem.length === 0) {
-  //   hasGotItem.value = [];
-  // }
-  // const position = randomNumber(0, notGotItem.length - 1);
-  // const itemName = notGotItem[position - 1];
-  // hasGotItem.value.push(itemName);
-  // const itemIdInConfig = config.value.item.indexOf(itemName);
-  // // 旋转转盘
-  // rotateWheel(position, config.value.item[itemIdInConfig]);
-  const position = randomNumber(1, config.value.item.length);
-  rotateWheel(position, config.value.item[position - 1]);
+  if (config.value.item.length !== maxNum || !notRandomedItem.length) {
+    console.log("====初始化随机数");
+    const max = config.value.item.length;
+    maxNum = max;
+    randomedItem = [];
+    notRandomedItem = [];
+    for (let i = 0; i < max; i++) {
+      notRandomedItem.push(i);
+    }
+    shuffle(notRandomedItem);
+  }
+  const random = randomNumber(0, notRandomedItem.length - 1);
+  const position = notRandomedItem[random];
+  notRandomedItem.splice(random, 1);
+  randomedItem.push(position);
+  console.log("====随机数", position, config.value.item[position]);
+  console.log("未抽取项", notRandomedItem);
+  console.log("已抽取项", randomedItem);
+  if (!isRotating.value) {
+    isRotating.value = true;
+    wheelResult.value = "";
+    rotateWheel(position + 1, config.value.item[position]);
+  }
 }
 
 function speakResult() {
@@ -389,6 +466,6 @@ onMounted(() => {
 <style scoped>
 .animate-rotating {
   transition-duration: 5s;
-  transition-timing-function: cubic-bezier(0.15, 0, 0, 1);
+  transition-timing-function: cubic-bezier(0.1, 0, 0, 1);
 }
 </style>

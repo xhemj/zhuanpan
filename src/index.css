@@ -25,3 +25,13 @@ body {
   overflow-x: hidden;
   padding: 1.5rem 1rem;
 }
+
+@media (max-width: 640px) {
+  .el-dialog {
+    @apply !mx-4 !max-w-full !w-auto;
+  }
+}
+
+.el-dialog {
+  @apply !max-w-xl !w-auto;
+}

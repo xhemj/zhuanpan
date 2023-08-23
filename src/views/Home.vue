@@ -10,7 +10,8 @@
       :width="canvasWidth"
       :height="canvasWidth"
       :style="{
-        transform: `rotate(${canvasRotate}deg)`
+        transform: `rotate(${canvasRotate}deg)`,
+        transitionDuration: isRotating ? `${config.rotateTime}s` : null
       }"
       :class="{
         'animate-rotating': isRotating
@@ -108,7 +109,8 @@
         </el-button>
         <p class="text-right text-sm text-gray-400 mt-2">共 {{ config.item.length }} 项</p>
       </el-tab-pane>
-      <el-tab-pane label="结果" name="2">
+      <el-tab-pane label="历史结果" name="2">
+        <h3 class="text-lg font-bold hidden">历史结果</h3>
         <el-table
           :scrollbar-always-on="true"
           :show-header="false"
@@ -123,6 +125,23 @@
           <el-table-column type="index" />
           <el-table-column prop="name" />
         </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="高级设置" name="3" :disabled="isRotating">
+        <h3 class="text-lg font-bold hidden">高级设置</h3>
+        <p class="text-sm text-gray-400 text-center mb-2">当前页面施工中……</p>
+        <el-form label-width="auto">
+          <el-form-item label="旋转时长">
+            <el-input-number v-model="config.rotateTime" :min="1" :max="10" :step="0.5" />
+            <span class="ml-2">秒</span>
+          </el-form-item>
+          <el-form-item label="清除缓存">
+            <el-button type="danger" @click="handleClearCache">清除</el-button>
+          </el-form-item>
+        </el-form>
+        <p class="text-sm text-gray-400 text-left mt-2">
+          开发者：目前还没做保存设置到本地的功能，所以每次刷新网页都要重新来调一遍设置咯~~
+        </p>
+        <p class="text-sm text-gray-400 text-left">其实这个页面主要是供我自己调试用的吧……</p>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -168,6 +187,7 @@ const config = ref({
   textRadius: 155, // 大转盘奖品位置距离圆心的距离
   insideRadius: 68, // 大转盘内圆的半径
   startAngle: 0, // 开始角度
+  rotateTime: 5, // 旋转时长(秒)
   colors: [
     "rgb(124,54,212)",
     "rgb(185,48,196)",
@@ -212,7 +232,7 @@ const tableRamdomedData = computed(() => {
  */
 function handleTableDelete(index, row) {
   ElMessageBox.confirm(`确定要移除名字 "${row.name}" 吗？`, "提示", {
-    confirmButtonText: "确定",
+    confirmButtonText: "移除",
     cancelButtonText: "取消",
     type: "warning",
     confirmButtonClass: "el-button--danger",
@@ -454,7 +474,28 @@ function rotateWheel(position, text) {
     speakResult();
     // timer && clearTimeout(timer);
     config.value.randomedItem.push(position - 1);
-  }, 5 * 1000);
+  }, config.value.rotateTime * 1000);
+}
+
+function handleClearCache() {
+  ElMessageBox.confirm(
+    "这将会清除本地的所有更改，并还原转盘到初始状态，确定要清除缓存吗？",
+    "提示",
+    {
+      confirmButtonText: "清除",
+      cancelButtonText: "取消",
+      type: "warning",
+      confirmButtonClass: "el-button--danger",
+      closeOnClickModal: false
+    }
+  )
+    .then(() => {
+      localStorage.removeItem(localstorageKey);
+      location.reload();
+    })
+    .catch(() => {
+      // do nothing
+    });
 }
 
 function randomNumber(min, max) {
@@ -526,7 +567,6 @@ onMounted(() => {
 
 <style scoped>
 .animate-rotating {
-  transition-duration: 5s;
   transition-timing-function: cubic-bezier(0.25, 0.01, 0, 1);
 }
 

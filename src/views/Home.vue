@@ -37,78 +37,107 @@
     </div>
   </div>
 
+  <!-- 配置区域 -->
   <div v-show="isInitData" class="mt-6">
-    <el-table
-      v-loading="!isInitData"
-      ref="tableRef"
-      :scrollbar-always-on="true"
-      stripe
-      :data="tableData"
-      style="width: 100%"
-      max-height="250"
-    >
-      <el-table-column prop="name" label="抽取名称" />
-      <el-table-column align="right">
-        <template #default="scope">
+    <el-tabs v-model="activeTabName" type="border-card">
+      <el-tab-pane label="抽取列表" name="1">
+        <h3 class="text-lg font-bold hidden">抽取名单</h3>
+        <el-table
+          v-loading="!isInitData"
+          ref="tableRef"
+          :scrollbar-always-on="true"
+          :show-header="false"
+          stripe
+          :data="tableData"
+          style="width: 100%"
+          max-height="250"
+        >
+          <template #empty>
+            <p class="text-center text-gray-400">暂无数据</p>
+          </template>
+          <el-table-column type="index" />
+          <el-table-column prop="name" />
+          <el-table-column align="right">
+            <template #default="scope">
+              <el-button
+                size="small"
+                type="primary"
+                :disabled="isRotating"
+                @click="handleTableEdit(scope.$index, scope.row)"
+              >
+                编辑
+              </el-button>
+              <el-button
+                size="small"
+                type="danger"
+                :disabled="isRotating"
+                @click="handleTableDelete(scope.$index, scope.row)"
+              >
+                移除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 添加项目区 -->
+        <div v-if="isAddingTableItem" class="mt-2">
+          <el-input
+            v-model="waitAddTableItem"
+            :autosize="{ minRows: 2, maxRows: 5 }"
+            type="textarea"
+            placeholder="请输入带抽取的项目，每行一个"
+            :disabled="isRotating"
+          />
           <el-button
-            size="small"
+            class="mt-2"
             type="primary"
             :disabled="isRotating"
-            @click="handleTableEdit(scope.$index, scope.row)"
+            style="width: 100%"
+            @click="confirmAddItem"
           >
-            编辑
+            确认添加
           </el-button>
-          <el-button
-            size="small"
-            type="danger"
-            :disabled="isRotating"
-            @click="handleTableDelete(scope.$index, scope.row)"
-          >
-            移除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="flex flex-row justify-between">
-      <p class="text-left text-sm text-gray-400">共 {{ config.item.length }} 项</p>
-    </div>
-    <div v-if="isAddingTableItem" class="mt-2">
-      <el-input
-        v-model="waitAddTableItem"
-        :autosize="{ minRows: 2, maxRows: 5 }"
-        type="textarea"
-        placeholder="请输入带抽取的项目，每行一个"
-        :disabled="isRotating"
-      />
-      <el-button
-        class="mt-2"
-        type="primary"
-        :disabled="isRotating"
-        style="width: 100%"
-        @click="confirmAddItem"
-      >
-        确认添加
-      </el-button>
-    </div>
-    <el-button
-      v-if="!isAddingTableItem"
-      class="mt-2"
-      style="width: 100%"
-      :disabled="isRotating"
-      @click="onAddItem"
-    >
-      添加更多
-    </el-button>
+        </div>
+        <el-button
+          v-if="!isAddingTableItem"
+          class="mt-2"
+          style="width: 100%"
+          :disabled="isRotating"
+          @click="onAddItem"
+        >
+          添加更多
+        </el-button>
+        <p class="text-right text-sm text-gray-400 mt-2">共 {{ config.item.length }} 项</p>
+      </el-tab-pane>
+      <el-tab-pane label="结果" name="2">
+        <el-table
+          :scrollbar-always-on="true"
+          :show-header="false"
+          stripe
+          :data="tableRamdomedData"
+          style="width: 100%"
+          max-height="250"
+        >
+          <template #empty>
+            <p class="text-center text-gray-400">暂无数据</p>
+          </template>
+          <el-table-column type="index" />
+          <el-table-column prop="name" />
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
   </div>
+
+  <!-- 版权提示 -->
   <div v-show="isInitData" class="mt-8">
     <p class="text-center text-sm text-gray-400">
       班级电脑小转盘 © {{ new Date().getFullYear() }} XHEMJ
     </p>
     <p class="text-center text-sm text-gray-400">配色与素材来源于手机软件“小决定”</p>
   </div>
+
   <!-- 表格编辑弹出框 -->
   <el-dialog title="编辑" v-model="editDialogVisible" :close-on-click-modal="false">
-    <el-form :model="editDialogForm" label-width="80px">
+    <el-form :model="editDialogForm">
       <el-form-item label="名称">
         <el-input v-model="editDialogForm.name" />
       </el-form-item>
@@ -125,7 +154,7 @@
 <script setup>
 import { computed, nextTick, onMounted, ref } from "vue";
 import { useDark } from "@vueuse/core";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import WheelButtonImage from "../assets/images/wheel_spin_button.png"; // 转盘按钮图片
 
 const canvasContainer = ref(null);
@@ -150,13 +179,15 @@ const config = ref({
     "rgb(30,89,205)"
   ],
   item: [], // 奖品名称
-  itemAngle: [] // 每个奖品所占的角度
+  itemAngle: [], // 每个奖品所占的角度,
+  randomedItem: [] // 已抽名单
 });
 const canvasRotate = ref(0); // 转盘旋转角度
 const eachAngle = computed(() => 360 / config.value.item.length); // 每个奖品所占的角度
 const wheelResult = ref(""); // 转盘结果
 const isRotating = ref(false); // 是否正在旋转
 const localstorageKey = "wheel_data";
+const activeTabName = ref("1");
 
 const tableData = computed(() => {
   return config.value.item.map((item, index) => {
@@ -166,12 +197,41 @@ const tableData = computed(() => {
   });
 });
 
+const tableRamdomedData = computed(() => {
+  return config.value.randomedItem.map((item, index) => {
+    return {
+      name: config.value.item[item]
+    };
+  });
+});
+
+/**
+ * 移除表格项
+ * @param {number} index 索引
+ * @param {object} row 行数据
+ */
 function handleTableDelete(index, row) {
-  config.value.item.splice(index, 1);
-  config.value.itemAngle.splice(index, 1);
-  initCanvas();
-  // 储存到本地
-  localStorage.setItem(localstorageKey, JSON.stringify(config.value.item));
+  ElMessageBox.confirm(`确定要移除名字 "${row.name}" 吗？`, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+    confirmButtonClass: "el-button--danger",
+    closeOnClickModal: false
+  })
+    .then(() => {
+      config.value.item.splice(index, 1);
+      config.value.itemAngle.splice(index, 1);
+      initCanvas();
+      // 储存到本地
+      localStorage.setItem(localstorageKey, JSON.stringify(config.value.item));
+      ElMessage({
+        message: "移除成功",
+        type: "success"
+      });
+    })
+    .catch(() => {
+      // do nothing
+    });
 }
 
 const isAddingTableItem = ref(false);
@@ -385,7 +445,7 @@ function rotateWheel(position, text) {
   }
   // 随机偏移量
   const offset = randomNumber(-eachAngle.value / 2 + 10, eachAngle.value / 2 - 10);
-  canvasRotate.value = angles + 3600 + offset;
+  canvasRotate.value = angles + 1800 + offset;
   setTimeout(() => {
     isRotating.value = false;
     canvasRotate.value = normalizeAngle(canvasRotate.value);
@@ -393,6 +453,7 @@ function rotateWheel(position, text) {
     wheelResult.value = text;
     speakResult();
     // timer && clearTimeout(timer);
+    config.value.randomedItem.push(position - 1);
   }, 5 * 1000);
 }
 
@@ -466,6 +527,10 @@ onMounted(() => {
 <style scoped>
 .animate-rotating {
   transition-duration: 5s;
-  transition-timing-function: cubic-bezier(0.1, 0, 0, 1);
+  transition-timing-function: cubic-bezier(0.25, 0.01, 0, 1);
+}
+
+:deep(.el-tabs--border-card > .el-tabs__content) {
+  padding: 0.5rem;
 }
 </style>

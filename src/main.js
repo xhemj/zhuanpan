@@ -1,5 +1,5 @@
-import "./index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
+import "./index.css";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 

@@ -28,6 +28,7 @@
 <script setup>
 import { computed } from "vue";
 import { useWheelStore } from "@/stores/wheel";
+import { showMessageBox } from "../utils";
 
 const wheel = useWheelStore();
 

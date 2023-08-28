@@ -9,13 +9,52 @@
     :data="tableData"
     class="w-full"
     max-height="250"
+    @cell-contextmenu="handleCellContextMenu"
+    @cell-dblclick="handleCellContextMenu"
   >
     <template #empty>
       <p class="text-center text-gray-400">暂无数据</p>
     </template>
-    <el-table-column type="index" />
-    <el-table-column prop="name" />
-    <el-table-column align="right">
+    <el-table-column type="index" label="#" />
+    <el-table-column prop="name" label="名称">
+      <template #default="scope">
+        <div
+          id="edit-area item-visible"
+          v-if="wheel.hiddenItems.includes(scope.row.name)"
+          class="text-gray-400"
+        >
+          <span class="line-through">{{ scope.row.name }}</span>
+          <el-button
+            class="pl-1"
+            text
+            type="info"
+            size="small"
+            :disabled="wheel.isRotating"
+            @click="handleTableEdit(scope.$index, scope.row)"
+            :icon="Hide"
+          >
+            已隐藏
+          </el-button>
+        </div>
+        <div v-else id="edit-area item-visible" class="w-full group/item">
+          <span>{{ scope.row.name }}</span>
+          <!-- <span class="invisible group-hover/item:visible">
+            <el-button
+              class="pl-1"
+              text
+              type="info"
+              size="small"
+              :disabled="wheel.isRotating"
+              @click="handleTableEdit(scope.$index, scope.row)"
+              :icon="View"
+            >
+              隐藏此项
+            </el-button>
+          </span> -->
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column align="right" label="操作">
       <template #default="scope">
         <div id="edit-area">
           <el-button
@@ -84,12 +123,15 @@
 
   <!-- 表格编辑弹出框 -->
   <el-dialog title="编辑" v-model="editDialogVisible" :close-on-click-modal="false">
-    <el-form :model="editDialogForm">
-      <el-form-item label="名称">
+    <el-form :model="editDialogForm" label-width="auto">
+      <el-form-item label="显示名称" required>
         <el-input v-model="editDialogForm.name" />
         <p class="text-sm text-gray-400">
           如需保存修改到本地，请在确认修改后点击页面下方的 “保存当前列表” 按钮。
         </p>
+      </el-form-item>
+      <el-form-item label="转盘中隐藏">
+        <el-switch v-model="editDialogForm.isHidden" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -103,25 +145,37 @@
 import { computed, ref, nextTick, onMounted } from "vue";
 import { useWheelStore } from "@/stores/wheel";
 import { showMessageBox } from "../utils";
-import { Delete, Edit } from "@element-plus/icons-vue";
+import { Delete, Edit, Hide } from "@element-plus/icons-vue";
 
 const emit = defineEmits(["update"]);
 
 const wheel = useWheelStore();
 const tableRef = ref(null);
-const isMobile = ref(false);
+const isInitTable = ref(false);
 
 const tableData = computed(() => {
-  return wheel.items.map((item, index) => {
+  return wheel.rawItems.map((item, index) => {
     return {
       name: item
     };
   });
 });
 
+/**
+ * 初始化表格
+ */
+function initTable() {
+  // 默认选择全部项
+  // tableRef.value.toggleAllSelection();
+  nextTick(() => {
+    isInitTable.value = true;
+  });
+}
+
 const editDialogForm = ref({
   name: "",
-  index: -1
+  index: -1,
+  isHidden: false
 });
 const editDialogVisible = ref(false);
 
@@ -133,6 +187,7 @@ const editDialogVisible = ref(false);
 function handleTableEdit(index, row) {
   editDialogForm.value.name = row.name;
   editDialogForm.value.index = index;
+  editDialogForm.value.isHidden = wheel.hiddenItems.includes(row.name);
   editDialogVisible.value = true;
 }
 
@@ -142,6 +197,16 @@ function handleTableEdit(index, row) {
 function confirmEdit() {
   editDialogVisible.value = false;
   wheel.items[editDialogForm.value.index] = editDialogForm.value.name;
+  if (editDialogForm.value.isHidden) {
+    wheel.hiddenItems.push(editDialogForm.value.name);
+  } else {
+    const index = wheel.hiddenItems.indexOf(editDialogForm.value.name);
+    if (index > -1) {
+      wheel.hiddenItems.splice(index, 1);
+    }
+  }
+  // 移除 wheel.items 中的隐藏的项
+  wheel.items = wheel.rawItems.filter((item) => !wheel.hiddenItems.includes(item));
   emit("update");
 }
 
@@ -213,6 +278,18 @@ function confirmAddItem() {
 }
 
 /**
+ * 右键菜单
+ * @param {number} row 行
+ * @param {number} column 列
+ * @param {object} cell 单元格
+ * @param {object} event 事件
+ */
+function handleCellContextMenu(row, column, cell, event) {
+  event.preventDefault();
+  handleTableEdit(row.$index, row);
+}
+
+/**
  * 保存到本地
  */
 function handleSaveToLocal() {
@@ -223,7 +300,9 @@ function handleSaveToLocal() {
   });
 }
 
-//
+onMounted(() => {
+  initTable();
+});
 </script>
 
 <style scoped>
@@ -231,5 +310,9 @@ function handleSaveToLocal() {
   #edit-area :deep(.el-button span) {
     display: none;
   }
+}
+
+#item-visible .el-button {
+  @apply !p-0 !ml-1;
 }
 </style>

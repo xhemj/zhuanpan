@@ -1,15 +1,19 @@
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
 
 export const useWheelStore = defineStore("wheel", () => {
   /**
-   * 所有的数据
+   * 转盘上渲染的数据
    */
   const items = ref([]);
   /**
-   * 所有的数据的角度
+   * 原始数据
    */
-  const itemsAngle = ref([]);
+  const rawItems = ref([]);
+  /**
+   * 隐藏的数据
+   */
+  const hiddenItems = ref([]);
   /**
    * 已随机的数据
    */
@@ -57,11 +61,13 @@ export const useWheelStore = defineStore("wheel", () => {
    */
   function deleteItem(index) {
     items.value.splice(index, 1);
+    rawItems.value.splice(index, 1);
   }
 
   return {
     items,
-    itemsAngle,
+    rawItems,
+    hiddenItems,
     randomedItem,
     notRandomedItem,
     randomedHistory,

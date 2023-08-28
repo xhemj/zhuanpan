@@ -6,7 +6,13 @@
   </div>
   <el-form label-width="auto">
     <el-form-item label="旋转时长">
-      <el-input-number v-model="wheel.rotateTime" :min="1" :max="10" :step="0.5" />
+      <el-input-number
+        v-model="wheel.rotateTime"
+        :disabled="wheel.isRotating"
+        :min="1"
+        :max="10"
+        :step="0.5"
+      />
       <span class="ml-2">秒</span>
     </el-form-item>
     <el-form-item label="语音合成测试">

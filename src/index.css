@@ -32,6 +32,8 @@ body {
   }
 }
 
-.el-dialog {
-  @apply !max-w-xl !w-auto;
+@media (min-width: 640px) {
+  .el-dialog {
+    @apply !max-w-lg !w-auto;
+  }
 }

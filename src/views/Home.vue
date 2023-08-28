@@ -1,8 +1,13 @@
 <template>
+  <!-- 加载中遮罩 -->
   <div v-loading.fullscreen.lock="!wheel.isInitData" element-loading-text="加载数据中……"></div>
+
+  <!-- 转盘结果区 -->
   <h2 v-show="wheel.isInitData" class="font-bold text-2xl md:text-4xl text-center mb-2 md:mb-4">
     {{ wheelResult ? wheelResult : wheel.isRotating ? "……" : "点击转盘开始抽奖" }}
   </h2>
+
+  <!-- 转盘区 -->
   <div v-show="wheel.isInitData" ref="canvasContainer" id="canvasContainer" class="relative">
     <canvas
       ref="canvasDom"
@@ -95,7 +100,6 @@ const config = ref({
     "rgb(30,89,205)"
   ],
   item: [], // 奖品名称
-  itemAngle: [], // 每个奖品所占的角度,
   randomedItem: [] // 已抽名单
 });
 const canvasRotate = ref(0); // 转盘旋转角度
@@ -123,6 +127,7 @@ async function initItemData() {
     data = json;
   }
   wheel.items = data;
+  wheel.rawItems = data;
   wheel.isInitData = true;
   resizeCanvas();
 }
@@ -361,6 +366,7 @@ onMounted(() => {
   }
   window.speakResult = speakResult;
   wheel.isSupportSpeechSynthesis = !!window.speechSynthesis;
+  window.initCanvas = initCanvas;
 });
 </script>
 

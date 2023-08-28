@@ -1,35 +1,25 @@
-# init
+# 班级小转盘
 
-This template should help get you started developing with Vue 3 in Vite.
+一个为学校班级电脑制作的小转盘工具。
 
-## Recommended IDE Setup
+## 技术栈
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+- [x] Vue
+- [x] Element Plus
+- [x] Tailwind CSS
+- [x] Pinia
 
-## Customize configuration
+## 功能
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- [x] 转盘抽奖
+- [x] 批量导入名单
+- [x] 历史中奖名单
+- [x] 编辑奖项、隐藏奖项
 
-## Project Setup
+## License
 
-```sh
-npm install
-```
+[GPL-3.0 License](LICENSE)
 
-### Compile and Hot-Reload for Development
+## 鸣谢
 
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+转盘配色与部分图片素材来源于手机软件 [小决定](https://play.google.com/store/apps/details?id=com.nixwang.tinydecisions)，在此表示感谢，如有侵权请联系删除。

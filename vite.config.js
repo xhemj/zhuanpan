@@ -13,6 +13,22 @@ import ElementPlus from "unplugin-element-plus/vite";
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "./",
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: "assets/[name]-[hash].js",
+        chunkFileNames: "assets/chunk-[hash].js",
+        // css文件使用chunk-[hash]形式，其他文件使用[name]-[hash]形式
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name.endsWith(".css")) {
+            return "assets/chunk-[hash].css";
+          } else {
+            return "assets/[name]-[hash].[ext]";
+          }
+        }
+      }
+    }
+  },
   plugins: [
     vue(),
     AutoImport({

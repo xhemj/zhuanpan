@@ -64,6 +64,16 @@
       班级电脑小转盘 © {{ new Date().getFullYear() }} XHEMJ
     </p>
     <p class="text-center text-sm text-gray-400">配色与素材来源于手机软件“小决定”</p>
+    <p class="text-center text-sm">
+      <a
+        class="text-gray-400"
+        href="https://beian.miit.gov.cn/"
+        target="_blank"
+        rel="nofollow noopener noreferrer"
+      >
+        闽ICP备2022010207号
+      </a>
+    </p>
   </div>
 </template>
 

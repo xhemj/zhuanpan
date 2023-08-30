@@ -96,6 +96,22 @@
     >
       确认添加
     </el-button>
+    <div class="w-full">
+      <el-button
+        class="w-full"
+        :disabled="wheel.isRotating"
+        @click="
+          () => {
+            isAddingTableItem = false;
+            waitAddTableItem = '';
+          }
+        "
+        text
+        type="info"
+      >
+        取消
+      </el-button>
+    </div>
   </div>
   <!-- 添加更多按钮 -->
   <el-button
@@ -119,15 +135,20 @@
       保存当前列表
     </el-button>
   </span>
-  <p class="text-right text-sm text-gray-400 mt-2">共 {{ wheel.items.length }} 项</p>
-
+  <p class="text-sm text-gray-400">
+    <el-icon class="align-middle mr-1"><Warning /></el-icon
+    >所有的更改默认都不会保存到本地，如需永久保存，请在每次确认修改后点击页面下方的
+    “保存当前列表”按钮。如需重置转盘到初始状态，请到 “高级设置” 处清除缓存。
+  </p>
+  <p class="text-right text-sm text-gray-400 mt-0">共 {{ wheel.items.length }} 项</p>
   <!-- 表格编辑弹出框 -->
   <el-dialog title="编辑" v-model="editDialogVisible" :close-on-click-modal="false">
     <el-form :model="editDialogForm" label-width="auto">
       <el-form-item label="显示名称" required>
         <el-input v-model="editDialogForm.name" />
         <p class="text-sm text-gray-400">
-          如需保存修改到本地，请在确认修改后点击页面下方的 “保存当前列表” 按钮。
+          <el-icon class="align-middle mr-1"><Warning /></el-icon
+          >如需保存修改到本地，请在确认修改后点击页面下方的 “保存当前列表” 按钮。
         </p>
       </el-form-item>
       <el-form-item label="转盘中隐藏">
@@ -136,7 +157,7 @@
     </el-form>
     <template #footer>
       <el-button @click="editDialogVisible = false">取消</el-button>
-      <el-button type="primary" @click="confirmEdit"> 确认修改 </el-button>
+      <el-button type="primary" @click="confirmEdit">确认修改</el-button>
     </template>
   </el-dialog>
 </template>
@@ -145,7 +166,7 @@
 import { computed, ref, nextTick, onMounted } from "vue";
 import { useWheelStore } from "@/stores/wheel";
 import { setLocalSettings, showMessageBox } from "../utils";
-import { Delete, Edit, Hide } from "@element-plus/icons-vue";
+import { Delete, Edit, Hide, Warning } from "@element-plus/icons-vue";
 
 const emit = defineEmits(["update"]);
 
@@ -263,12 +284,13 @@ function confirmAddItem() {
     });
   }
   wheel.items = wheel.items.concat(items);
+  wheel.rawItems = JSON.parse(JSON.stringify(wheel.items));
   isAddingTableItem.value = false;
   ElMessage({
     message: `成功添加 ${items.length} 项`,
     type: "success"
   });
-  handleSaveToLocal();
+  // handleSaveToLocal();
   nextTick(() => {
     if (items.length && tableRef.value) {
       tableRef.value.scrollTo(0, 9999);
@@ -314,5 +336,11 @@ onMounted(() => {
 
 #item-visible .el-button {
   @apply !p-0 !ml-1;
+}
+
+.text-link {
+  color: #409eff;
+  color: var(--el-color-primary);
+  @apply cursor-pointer;
 }
 </style>

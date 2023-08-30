@@ -29,7 +29,6 @@ export const useWheelStore = defineStore("wheel", () => {
   /**
    * 本地存储的key
    */
-  const localstorageKey = "wheel_data";
   /**
    * 是否已经初始化数据
    */
@@ -67,7 +66,6 @@ export const useWheelStore = defineStore("wheel", () => {
     randomedItem,
     notRandomedItem,
     randomedHistory,
-    localstorageKey,
 
     isInitData,
     isRotating,

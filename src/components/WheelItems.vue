@@ -144,7 +144,7 @@
 <script setup>
 import { computed, ref, nextTick, onMounted } from "vue";
 import { useWheelStore } from "@/stores/wheel";
-import { showMessageBox } from "../utils";
+import { setLocalSettings, showMessageBox } from "../utils";
 import { Delete, Edit, Hide } from "@element-plus/icons-vue";
 
 const emit = defineEmits(["update"]);
@@ -218,7 +218,7 @@ function confirmEdit() {
 function handleTableDelete(index, row) {
   showMessageBox({
     title: "提示",
-    message: `确定要永久移除名字 "${row.name}" 吗？此操作不可撤回！`,
+    message: `确定要移除名字 "${row.name}" 吗？`,
     type: "warning",
     confirmButtonText: "移除",
     cancelButtonText: "取消",
@@ -293,7 +293,7 @@ function handleCellContextMenu(row, column, cell, event) {
  * 保存到本地
  */
 function handleSaveToLocal() {
-  localStorage.setItem(wheel.localstorageKey, JSON.stringify(wheel.items));
+  setLocalSettings("wheel", "items", JSON.stringify(wheel.items));
   ElMessage({
     message: "保存成功",
     type: "success"

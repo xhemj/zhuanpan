@@ -30,14 +30,45 @@ export function showMessageBox(
     });
 }
 
+const storageKey = "config";
+
 /**
- * 判断是否为手机端
+ * 写入本地设置
+ * @param {string} tag 分类
+ * @param {string} key 键
+ * @param {any} value 值
  */
-export function useDevice() {
-  const ua = navigator.userAgent;
-  const isAndroid = ua.indexOf("Android") > -1 || ua.indexOf("Adr") > -1; //android终端
-  const isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
-  return {
-    isMobile: isAndroid || isiOS
-  };
-}
+export const setLocalSettings = (tag, key, value) => {
+  const localSettings = localStorage.getItem(storageKey) || "{}";
+  const settings = JSON.parse(localSettings);
+  if (!settings[tag]) {
+    settings[tag] = {};
+  }
+  settings[tag][key] = value;
+  localStorage.setItem(storageKey, JSON.stringify(settings));
+};
+
+/**
+ * 读取本地设置
+ * @param {string} tag 分类
+ */
+export const getLocalSettings = (tag) => {
+  const localSettings = localStorage.getItem(storageKey) || "{}";
+  const settings = JSON.parse(localSettings);
+  return settings[tag] || {};
+};
+
+/**
+ * 清除本地设置
+ * @param {string} tag 分类
+ */
+export const clearLocalSettings = (tag) => {
+  const localSettings = localStorage.getItem(storageKey) || "{}";
+  const settings = JSON.parse(localSettings);
+  if (tag) {
+    delete settings[tag];
+    localStorage.setItem(storageKey, JSON.stringify(settings));
+  } else {
+    localStorage.removeItem(storageKey);
+  }
+};

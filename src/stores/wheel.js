@@ -31,10 +31,6 @@ export const useWheelStore = defineStore("wheel", () => {
    */
   const localstorageKey = "wheel_data";
   /**
-   * 旋转时间
-   */
-  const rotateTime = ref(5);
-  /**
    * 是否已经初始化数据
    */
   const isInitData = ref(false);
@@ -72,7 +68,6 @@ export const useWheelStore = defineStore("wheel", () => {
     notRandomedItem,
     randomedHistory,
     localstorageKey,
-    rotateTime,
 
     isInitData,
     isRotating,

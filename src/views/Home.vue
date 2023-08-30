@@ -16,7 +16,7 @@
       :height="canvasWidth"
       :style="{
         transform: `rotate(${canvasRotate}deg)`,
-        transitionDuration: wheel.isRotating ? `${wheel.rotateTime}s` : null
+        transitionDuration: wheel.isRotating ? `${settings.wheelRotateTime}s` : null
       }"
       :class="{
         'animate-rotating': wheel.isRotating
@@ -82,12 +82,15 @@ import { computed, defineAsyncComponent, nextTick, onMounted, ref } from "vue";
 import { useDark } from "@vueuse/core";
 import WheelButtonImage from "../assets/images/wheel_spin_button.png"; // 转盘按钮图片
 import { useWheelStore } from "@/stores/wheel";
+import { useSettingStore } from "@/stores/setting";
+import { getLocalSettings, setLocalSettings } from "../utils";
 
 const WheelHistory = defineAsyncComponent(() => import("../components/WheelHistory.vue"));
 const WheelItems = defineAsyncComponent(() => import("../components/WheelItems.vue"));
 const WheelSettings = defineAsyncComponent(() => import("../components/WheelSettings.vue"));
 
 const wheel = useWheelStore();
+const settings = useSettingStore();
 const canvasContainer = ref(null);
 const canvasDom = ref(null);
 
@@ -98,7 +101,6 @@ const config = ref({
   textRadius: 155, // 大转盘奖品位置距离圆心的距离
   insideRadius: 68, // 大转盘内圆的半径
   startAngle: 0, // 开始角度
-  rotateTime: 5, // 旋转时长(秒)
   colors: [
     "rgb(124,54,212)",
     "rgb(185,48,196)",
@@ -121,11 +123,18 @@ const activeTabName = ref("1");
  * 初始化数据
  */
 async function initItemData() {
-  const localConfig = localStorage.getItem(wheel.localstorageKey);
-  const localConfigJson = localConfig ? JSON.parse(localConfig) : null;
+  // 2023.08.30 本地缓存格式更换兼容性处理
+  const oldData = localStorage.getItem("wheel_data");
+  if (oldData) {
+    setLocalSettings("wheel", "items", oldData);
+    localStorage.removeItem("wheel_data");
+  }
+  const localConfig = getLocalSettings("wheel", "items");
+  console.log("====本地缓存", localConfig);
+  const localData = localConfig.items ? JSON.parse(localConfig.items) : [];
   let data = null;
-  if (localConfigJson && localConfigJson.length) {
-    data = localConfigJson;
+  if (localData && localData.length) {
+    data = localData;
   } else {
     const res = await fetch(
       "https://staticoss.xhemj.work/zhuanpan.xhemj.com/data.json?_t=" + Date.now(),
@@ -292,7 +301,7 @@ function rotateWheel(position, text) {
     speakResult(text);
     // timer && clearTimeout(timer);
     wheel.randomedHistory.push(position - 1);
-  }, wheel.rotateTime * 1000);
+  }, settings.wheelRotateTime * 1000);
 }
 
 /**
@@ -369,6 +378,7 @@ function speakResult(text) {
 }
 
 onMounted(() => {
+  settings.init();
   initItemData();
   const isDark = useDark();
   if (isDark.value) {

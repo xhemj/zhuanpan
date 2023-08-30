@@ -7,7 +7,7 @@
   <el-form label-width="auto">
     <el-form-item label="旋转时长">
       <el-input-number
-        v-model="wheel.rotateTime"
+        v-model="configInstance.rotateTime"
         :disabled="wheel.isRotating"
         :min="1"
         :max="10"
@@ -43,22 +43,29 @@
       <el-button type="danger" @click="handleClearCache">清除</el-button>
     </el-form-item>
   </el-form>
-  <p class="text-sm text-gray-400 text-left mt-2">
-    开发者：目前还没做保存设置到本地的功能，所以每次刷新网页都要重新来调一遍设置咯~~
-  </p>
-  <p class="text-sm text-gray-400 text-left">其实这个页面主要是供我自己调试用的吧……</p>
 </template>
 
 <script setup>
+import { onMounted, ref } from "vue";
+import { clearLocalSettings, showMessageBox } from "../utils";
 import { useWheelStore } from "@/stores/wheel";
-import { ref } from "vue";
-import { showMessageBox } from "../utils";
+import { useSettingStore } from "@/stores/setting";
 
 const emit = defineEmits(["speakResult"]);
 
 const wheel = useWheelStore();
+const settings = useSettingStore();
 
 const speakTestStr = ref("测试语音合成");
+
+const configInstance = {
+  get rotateTime() {
+    return settings.wheelRotateTime;
+  },
+  set rotateTime(val) {
+    settings.setWheelRotateTime(val);
+  }
+};
 
 /**
  * 模拟语音合成
@@ -79,11 +86,15 @@ function handleClearCache() {
     cancelButtonText: "取消",
     confirmButtonClass: "el-button--danger",
     callback: () => {
-      localStorage.removeItem(wheel.localstorageKey);
+      clearLocalSettings("wheel");
       window.location.reload();
     }
   });
 }
+
+onMounted(() => {
+  settings.init();
+});
 </script>
 
 <style scoped></style>

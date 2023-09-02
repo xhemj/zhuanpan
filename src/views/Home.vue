@@ -28,7 +28,7 @@
       class="flex absolute left-0 right-0 top-0 bottom-0 justify-center items-center h-full w-full select-none"
     >
       <img
-        :src="WheelButtonImage"
+        src="/images/wheel_spin_button.png"
         alt="转动转盘"
         class="h-auto w-32"
         :style="{
@@ -80,7 +80,6 @@
 <script setup>
 import { computed, defineAsyncComponent, nextTick, onMounted, ref } from "vue";
 import { useDark } from "@vueuse/core";
-import WheelButtonImage from "../assets/images/wheel_spin_button.png"; // 转盘按钮图片
 import { useWheelStore } from "@/stores/wheel";
 import { useSettingStore } from "@/stores/setting";
 import { getLocalSettings, setLocalSettings } from "../utils";
@@ -298,7 +297,9 @@ function rotateWheel(position, text) {
     canvasRotate.value = normalizeAngle(canvasRotate.value);
     // alert(text);
     wheelResult.value = text;
-    speakResult(text);
+    if (settings.isAutoRead) {
+      speakResult(text);
+    }
     // timer && clearTimeout(timer);
     wheel.randomedHistory.push(position - 1);
   }, settings.wheelRotateTime * 1000);

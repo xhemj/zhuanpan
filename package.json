@@ -34,6 +34,7 @@
     "unplugin-element-plus": "^0.8.0",
     "unplugin-icons": "^0.16.5",
     "unplugin-vue-components": "^0.25.1",
-    "vite": "^4.3.9"
+    "vite": "^4.3.9",
+    "vite-plugin-pwa": "^0.16.4"
   }
 }

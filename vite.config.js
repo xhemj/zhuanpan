@@ -1,5 +1,4 @@
 import { fileURLToPath, URL } from "node:url";
-
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import legacy from "@vitejs/plugin-legacy";
@@ -10,6 +9,8 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import IconsResolver from "unplugin-icons/resolver";
 import ElementPlus from "unplugin-element-plus/vite";
 import { visualizer } from "rollup-plugin-visualizer";
+import { VitePWA } from "vite-plugin-pwa";
+import * as child from "child_process";
 
 const plugins = [];
 
@@ -24,9 +25,18 @@ if (process.env.NODE_ENV === "production") {
   );
 }
 
+const commitHash = child
+  .execSync("D:\\cmder\\vendor\\git-for-windows\\bin\\git.exe rev-parse --short HEAD")
+  .toString();
+const buildDate = new Date().getTime();
+
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "./",
+  define: {
+    __COMMIT_HASH__: JSON.stringify(commitHash),
+    __BUILD_DATE__: JSON.stringify(buildDate)
+  },
   build: {
     rollupOptions: {
       output: {
@@ -52,6 +62,36 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()]
     }),
     ElementPlus(),
+    VitePWA({
+      registerType: "autoUpdate",
+      injectRegister: "auto",
+      includeAssets: [
+        "favicon.ico",
+        "logo.png",
+        "images/background.jpg",
+        "images/wheel_spin_button.png"
+      ],
+      workbox: {
+        cleanupOutdatedCaches: false
+      },
+      manifest: {
+        name: "小转盘",
+        short_name: "小转盘",
+        description: "一个班级自用的小转盘",
+        theme_color: "#ffffff",
+        icons: [
+          {
+            src: "logo.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable"
+          }
+        ]
+      },
+      devOptions: {
+        enabled: true
+      }
+    }),
     legacy({
       targets: ["defaults", "not IE 11"]
     }),

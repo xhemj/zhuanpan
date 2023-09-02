@@ -8,7 +8,12 @@ export const useSettingStore = defineStore("setting", {
        * 转盘旋转时间（单位：秒）
        * @type {number}
        */
-      wheelRotateTime: 5
+      wheelRotateTime: 5,
+      /**
+       * 是否自动朗读结果
+       * @type {boolean}
+       */
+      isAutoRead: true
     };
   },
   actions: {
@@ -28,6 +33,14 @@ export const useSettingStore = defineStore("setting", {
     setWheelRotateTime(time) {
       this.wheelRotateTime = time;
       setLocalSettings("setting", "wheelRotateTime", this.wheelRotateTime);
+    },
+
+    /**
+     * 设置是否自动朗读结果
+     */
+    setIsAutoRead(isAutoRead) {
+      this.isAutoRead = isAutoRead;
+      setLocalSettings("setting", "isAutoRead", this.isAutoRead);
     }
   }
 });

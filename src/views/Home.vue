@@ -135,17 +135,23 @@ async function initItemData() {
   if (localData && localData.length) {
     data = localData;
   } else {
-    const res = await fetch(
-      "https://staticoss.xhemj.work/zhuanpan.xhemj.com/data.json?_t=" + Date.now(),
-      {
-        mode: "cors"
-      }
-    );
-    const json = await res.json();
-    data = json;
+    try {
+      const res = await fetch(
+        "https://staticoss.xhemj.work/zhuanpan.xhemj.com/data.json?_t=" + Date.now(),
+        {
+          mode: "cors"
+        }
+      );
+      const json = await res.json();
+      data = json;
+    } catch (error) {
+      console.error(error);
+      data = ["1", "2", "3"];
+    }
   }
   wheel.items = data;
   wheel.rawItems = data;
+  setLocalSettings("wheel", "items", JSON.stringify(data));
   wheel.isInitData = true;
   resizeCanvas();
 }

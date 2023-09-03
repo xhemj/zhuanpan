@@ -44,36 +44,38 @@
       </div>
     </el-form-item>
 
-    <el-form-item label="缓存版本信息">
-      <div class="w-full">
-        <p class="text-gray-400 text-sm">
-          <span class="font-bold">构建版本：</span>
-          <span class="text-gray-400"
-            ><span class="border-b border-dashed">{{ commitSha }}</span> -
-            {{ isDev ? "DEV" : "PROD" }}
-          </span>
-        </p>
-        <p class="text-gray-400 text-sm">
-          <span class="font-bold">构建时间：</span>
-          <span class="text-gray-400">{{ buildDate }}</span>
-        </p>
-      </div>
+    <el-form-item label="清除 SW">
+      <el-button type="danger" @click="handleUnregisterSW">移除注册</el-button>
     </el-form-item>
 
     <el-form-item label="清除缓存">
       <el-button type="danger" @click="handleClearCache">清除</el-button>
     </el-form-item>
 
-    <el-form-item label="SW 状态">
+    <el-form-item label="调试信息">
       <div class="w-full">
-        <p class="text-gray-400 text-sm" v-if="!isSupportServiceWorker">不支持</p>
-        <p class="text-gray-400 text-sm" v-else-if="offlineReady">已准备好离线使用</p>
-        <p class="text-gray-400 text-sm" v-else>检测到了内容更新</p>
-      </div>
-    </el-form-item>
+        <p class="text-gray-400 text-sm">
+          构建版本：<span class="text-gray-400"
+            ><span class="border-b border-dashed">{{ commitSha }}</span> -
+            {{ isDev ? "DEV" : "PROD" }}
+          </span>
+        </p>
+        <p class="text-gray-400 text-sm">
+          构建时间：<span class="text-gray-400">{{ buildDate }}</span>
+        </p>
 
-    <el-form-item label="清除 SW">
-      <el-button type="danger" @click="handleUnregisterSW">移除注册</el-button>
+        <p class="text-gray-400 text-sm">
+          SW 状态：{{ isSupportServiceWorker ? "已启用" : "不支持" }}
+        </p>
+
+        <p class="text-gray-400 text-sm">
+          离线：{{ offlineReady ? "已准备好离线使用" : "未准备好离线使用" }}
+        </p>
+
+        <p class="text-gray-400 text-sm">
+          内容更新：{{ needRefresh ? "检测到内容更新" : "未检测到内容更新" }}
+        </p>
+      </div>
     </el-form-item>
   </el-form>
 </template>
@@ -84,7 +86,7 @@ import { clearLocalSettings, showMessageBox } from "../utils";
 import { useWheelStore } from "@/stores/wheel";
 import { useSettingStore } from "@/stores/setting";
 import { useRegisterSW } from "virtual:pwa-register/vue";
-const { offlineReady, updateServiceWorker } = useRegisterSW();
+const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW();
 
 const emit = defineEmits(["speakResult"]);
 

@@ -4,12 +4,12 @@
   <div class="mb-2">
     <el-alert title="当前页面仅供调试使用" type="warning" show-icon />
   </div>
-  <el-form label-width="auto">
+  <el-form label-width="auto" @submit.prevent>
     <el-form-item label="转盘旋转时长">
       <el-input-number
         v-model="configInstance.rotateTime"
         :disabled="wheel.isRotating"
-        :min="1"
+        :min="0.5"
         :max="10"
         :step="0.5"
       />
@@ -18,6 +18,10 @@
 
     <el-form-item label="朗读结果">
       <el-switch v-model="configInstance.isAutoRead" />
+    </el-form-item>
+
+    <el-form-item label="已摇到的结果变灰">
+      <el-switch v-model="configInstance.isGrayRandomedItem" />
     </el-form-item>
 
     <el-form-item label="语音合成测试">
@@ -113,6 +117,7 @@ const configInstance = {
   set rotateTime(val) {
     settings.setWheelRotateTime(val);
   },
+
   /**
    * 是否自动朗读结果
    */
@@ -121,6 +126,16 @@ const configInstance = {
   },
   set isAutoRead(val) {
     settings.setIsAutoRead(val);
+  },
+
+  /**
+   * 已摇到的结果变灰
+   */
+  get isGrayRandomedItem() {
+    return settings.isGrayRandomedItem;
+  },
+  set isGrayRandomedItem(val) {
+    settings.setIsGrayRandomedItem(val);
   }
 };
 

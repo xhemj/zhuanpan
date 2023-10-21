@@ -110,6 +110,7 @@ const config = ref({
     "rgb(63,144,187)",
     "rgb(30,89,205)"
   ],
+  itemColor: {}, // 每个奖品所对应的颜色
   item: [], // 奖品名称
   randomedItem: [] // 已抽名单
 });
@@ -153,7 +154,20 @@ async function initItemData() {
   wheel.rawItems = data;
   setLocalSettings("wheel", "items", JSON.stringify(data));
   wheel.isInitData = true;
+  computeItemColor();
   resizeCanvas();
+}
+
+/**
+ * 计算每个奖品所对应的颜色
+ */
+function computeItemColor() {
+  const colors = config.value.colors;
+  const itemColor = {};
+  wheel.items.forEach((item, index) => {
+    itemColor[index + item] = colors[index % colors.length] || colors[0];
+  });
+  config.value.itemColor = itemColor;
 }
 
 /**
@@ -229,7 +243,7 @@ function drawWheel(canvas) {
 
   for (let i = 0; i < wheel.items.length; i++) {
     let angle = config.value.startAngle + i * arc;
-    ctx.fillStyle = config.value.colors[i % config.value.colors.length] || config.value.colors[0];
+    ctx.fillStyle = config.value.itemColor[i + wheel.items[i]];
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 4;
     ctx.beginPath();
@@ -308,6 +322,7 @@ function rotateWheel(position, text) {
     }
     // timer && clearTimeout(timer);
     wheel.randomedHistory.push(position - 1);
+    drawWheel(canvas);
   }, settings.wheelRotateTime * 1000);
 }
 
@@ -341,6 +356,9 @@ function handleRotate() {
   if (wheel.isRotating) return;
   wheel.isRotating = true;
 
+  // 已经摇到过的奖品的颜色
+  const randomedColor = "rgba(0,0,0,0.8)";
+
   if (wheel.items.length !== maxNum.value || !wheel.notRandomedItem.length) {
     console.log("====初始化随机数");
     const max = wheel.items.length;
@@ -351,6 +369,7 @@ function handleRotate() {
       wheel.notRandomedItem.push(i);
     }
     shuffle(wheel.notRandomedItem);
+    computeItemColor();
   }
   const random = randomNumber(0, wheel.notRandomedItem.length - 1);
   const position = wheel.notRandomedItem[random];
@@ -360,6 +379,9 @@ function handleRotate() {
   console.log("未抽取项", wheel.notRandomedItem);
   console.log("已抽取项", wheel.randomedItem);
   wheelResult.value = "";
+  if (settings.isGrayRandomedItem) {
+    config.value.itemColor[position + wheel.items[position]] = randomedColor;
+  }
   rotateWheel(position + 1, wheel.items[position]);
 }
 

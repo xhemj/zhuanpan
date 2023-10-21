@@ -13,7 +13,12 @@ export const useSettingStore = defineStore("setting", {
        * 是否自动朗读结果
        * @type {boolean}
        */
-      isAutoRead: true
+      isAutoRead: true,
+      /**
+       * 是否已摇到的结果变灰
+       * @type {boolean}
+       */
+      isGrayRandomedItem: false
     };
   },
   actions: {
@@ -41,6 +46,14 @@ export const useSettingStore = defineStore("setting", {
     setIsAutoRead(isAutoRead) {
       this.isAutoRead = isAutoRead;
       setLocalSettings("setting", "isAutoRead", this.isAutoRead);
+    },
+
+    /**
+     * 设置是否已摇到的结果变灰
+     */
+    setIsGrayRandomedItem(isGrayRandomedItem) {
+      this.isGrayRandomedItem = isGrayRandomedItem;
+      setLocalSettings("setting", "isGrayRandomedItem", this.isGrayRandomedItem);
     }
   }
 });

@@ -9,8 +9,6 @@
     :data="tableData"
     class="w-full"
     max-height="250"
-    @cell-contextmenu="handleCellContextMenu"
-    @cell-dblclick="handleCellContextMenu"
   >
     <template #empty>
       <p class="text-center text-gray-400">暂无数据</p>
@@ -143,7 +141,7 @@
   <p class="text-right text-sm text-gray-400 mt-0">共 {{ wheel.items.length }} 项</p>
   <!-- 表格编辑弹出框 -->
   <el-dialog title="编辑" v-model="editDialogVisible" :close-on-click-modal="false">
-    <el-form :model="editDialogForm" label-width="auto">
+    <el-form :model="editDialogForm" label-width="auto" @submit.prevent>
       <el-form-item label="显示名称" required>
         <el-input v-model="editDialogForm.name" />
         <p class="text-sm text-gray-400">
@@ -218,6 +216,8 @@ function handleTableEdit(index, row) {
 function confirmEdit() {
   editDialogVisible.value = false;
   wheel.items[editDialogForm.value.index] = editDialogForm.value.name;
+  wheel.rawItems[editDialogForm.value.index] = editDialogForm.value.name;
+  // 更新隐藏项
   if (editDialogForm.value.isHidden) {
     wheel.hiddenItems.push(editDialogForm.value.name);
   } else {

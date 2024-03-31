@@ -56,7 +56,7 @@ export const useWheelStore = defineStore("wheel", () => {
    */
   function deleteItem(index) {
     items.value.splice(index, 1);
-    rawItems.value.splice(index, 1);
+    // rawItems.value.splice(index, 1);
   }
 
   return {

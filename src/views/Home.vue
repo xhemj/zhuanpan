@@ -1,6 +1,6 @@
 <template>
   <!-- 加载中遮罩 -->
-  <div v-loading.fullscreen.lock="!wheel.isInitData" element-loading-text="加载数据中……"></div>
+  <div v-loading.fullscreen.lock="!isInitCanvas" element-loading-text="加载数据中……"></div>
 
   <!-- 转盘结果区 -->
   <h2 v-show="wheel.isInitData" class="font-bold text-2xl md:text-4xl text-center mb-2 md:mb-4">
@@ -83,6 +83,7 @@ import { useDark } from "@vueuse/core";
 import { useWheelStore } from "@/stores/wheel";
 import { useSettingStore } from "@/stores/setting";
 import { getLocalSettings, setLocalSettings } from "../utils";
+import FontFaceObserver from "fontfaceobserver";
 
 const WheelHistory = defineAsyncComponent(() => import("../components/WheelHistory.vue"));
 const WheelItems = defineAsyncComponent(() => import("../components/WheelItems.vue"));
@@ -118,6 +119,11 @@ const canvasRotate = ref(0); // 转盘旋转角度
 const eachAngle = computed(() => 360 / wheel.items.length); // 每个奖品所占的角度
 const wheelResult = ref(""); // 转盘结果
 const activeTabName = ref("1");
+const WheelItemStr = computed(() => wheel.items.join(""));
+const isInitFont = ref(false);
+const isInitCanvas = ref(false);
+
+const font = new FontFaceObserver("MiSans VF");
 
 /**
  * 初始化数据
@@ -130,25 +136,25 @@ async function initItemData() {
     localStorage.removeItem("wheel_data");
   }
   const localConfig = getLocalSettings("wheel", "items");
-  console.log("====本地缓存", localConfig);
+  // console.log("====本地缓存", localConfig);
   const localData = localConfig.items ? JSON.parse(localConfig.items) : [];
   let data = null;
   if (localData && localData.length) {
     data = localData;
   } else {
-    try {
-      const res = await fetch(
-        "https://staticoss.xhemj.work/zhuanpan.xhemj.com/data.json?_t=" + Date.now(),
-        {
-          mode: "cors"
-        }
-      );
-      const json = await res.json();
-      data = json;
-    } catch (error) {
-      console.error(error);
-      data = ["1", "2", "3"];
-    }
+    // try {
+    //   const res = await fetch(
+    //     "https://staticoss.xhemj.work/zhuanpan.xhemj.com/data.json?_t=" + Date.now(),
+    //     {
+    //       mode: "cors"
+    //     }
+    //   );
+    //   const json = await res.json();
+    //   data = json;
+    // } catch (error) {
+    // console.error(error);
+    data = ["1", "2", "3"];
+    // }
   }
   wheel.items = data;
   wheel.rawItems = data;
@@ -201,7 +207,15 @@ function initCanvas() {
     config.value.outsideRadius = canvasWidth.value / 2 - 10;
     config.value.textRadius = canvasWidth.value / 2 - 40;
     nextTick(() => {
-      drawWheel(canvas);
+      if (!isInitFont.value) {
+        // console.log("====初始化字体");
+        font.load(WheelItemStr.value).then(function () {
+          // console.log("====字体加载成功");
+          drawWheel(canvas);
+        });
+      } else {
+        drawWheel(canvas);
+      }
     });
   }
 }
@@ -237,7 +251,7 @@ function drawWheel(canvas) {
     getComputedStyle(document.querySelector("#screen-fontsize")).fontSize
   );
   // ctx.font = "20px bold Microsoft YaHei";
-  ctx.font = `${fontSize * 1}px bold Microsoft YaHei`;
+  ctx.font = `500 ${fontSize * 1}px MiSans VF`;
 
   const halfWidth = canvasWidth.value / 2;
 
@@ -287,6 +301,7 @@ function drawWheel(canvas) {
     ctx.restore();
     //----绘制奖品结束----
   }
+  isInitCanvas.value = true;
 }
 
 /**
@@ -360,7 +375,7 @@ function handleRotate() {
   const randomedColor = "rgba(0,0,0,0.8)";
 
   if (wheel.items.length !== maxNum.value || !wheel.notRandomedItem.length) {
-    console.log("====初始化随机数");
+    // console.log("====初始化随机数");
     const max = wheel.items.length;
     maxNum.value = max;
     wheel.randomedItem = [];
@@ -375,9 +390,9 @@ function handleRotate() {
   const position = wheel.notRandomedItem[random];
   wheel.notRandomedItem.splice(random, 1);
   wheel.randomedItem.push(position);
-  console.log("====随机数", position, wheel.items[position]);
-  console.log("未抽取项", wheel.notRandomedItem);
-  console.log("已抽取项", wheel.randomedItem);
+  // console.log("====随机数", position, wheel.items[position]);
+  // console.log("未抽取项", wheel.notRandomedItem);
+  // console.log("已抽取项", wheel.randomedItem);
   wheelResult.value = "";
   if (settings.isGrayRandomedItem) {
     config.value.itemColor[position + wheel.items[position]] = randomedColor;
